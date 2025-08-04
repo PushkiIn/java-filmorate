@@ -24,7 +24,7 @@ public class User {
 
     @AssertTrue(message = "День рождения не может быть в будущем", groups = {OnCreate.class, OnUpdate.class})
     private boolean isBirthdayValid() {
-        if(birthday == null) {
+        if (birthday == null) {
             return true;
         }
         return !birthday.isAfter(LocalDate.now());
