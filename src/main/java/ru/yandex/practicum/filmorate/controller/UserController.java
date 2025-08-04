@@ -27,7 +27,7 @@ public class UserController {
 
     @PostMapping
     public User create(@Validated(OnCreate.class) @RequestBody User user) {
-        if (user.getName() == null || user.getName().isBlank()) {
+        if(user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
 
@@ -41,26 +41,26 @@ public class UserController {
 
     @PutMapping
     public User update(@Validated(OnUpdate.class) @RequestBody User newUser) {
-        if (!users.containsKey(newUser.getId())) {
+        if(!users.containsKey(newUser.getId())) {
             log.warn("Не найден пользователь с id={}", newUser.getId());
             throw new NotFoundException("Пользователь с id " + newUser.getId() + " не найден");
         }
 
         User oldUser = users.get(newUser.getId());
 
-        if (newUser.getLogin() != null && !newUser.getLogin().isBlank()) {
+        if(newUser.getLogin() != null && !newUser.getLogin().isBlank()) {
             oldUser.setLogin(newUser.getLogin());
         }
 
-        if (newUser.getEmail() != null && !newUser.getEmail().isBlank()) {
+        if(newUser.getEmail() != null && !newUser.getEmail().isBlank()) {
             oldUser.setEmail(newUser.getEmail());
         }
 
-        if (newUser.getBirthday() != null) {
+        if(newUser.getBirthday() != null) {
             oldUser.setBirthday(newUser.getBirthday());
         }
 
-        if (newUser.getName() != null && !newUser.getName().isBlank()) {
+        if(newUser.getName() != null && !newUser.getName().isBlank()) {
             oldUser.setName(newUser.getName());
         }
 
