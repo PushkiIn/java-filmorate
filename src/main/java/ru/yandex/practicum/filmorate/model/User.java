@@ -14,7 +14,7 @@ public class User {
     @NotBlank(message = "email обязателен при создании", groups = OnCreate.class)
     @Email(groups = {OnUpdate.class, OnCreate.class})
     private String email;
-    @NotNull( message = "логин обязателен при создании", groups = OnCreate.class)
+    @NotNull(message = "логин обязателен при создании", groups = OnCreate.class)
     @Pattern(regexp = "\\S+", message = "строка не должна содержать пробелов", groups = {OnUpdate.class, OnCreate.class})
     private String login;
     private String name;

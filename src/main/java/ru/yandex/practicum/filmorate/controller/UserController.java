@@ -27,7 +27,7 @@ public class UserController {
 
     @PostMapping
     public User create(@Validated(OnCreate.class) @RequestBody User user) {
-        if(user.getName() == null || user.getName().isBlank()) {
+        if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
 
