@@ -49,7 +49,6 @@ public class FilmController {
                 log.debug("Поле description фильма с id={} обновлено, новое значение descriprion={}", oldFilm.getId(), oldFilm.getDescription());
             }
 
-
             if (newFilm.getReleaseDate() != null) {
                 oldFilm.setReleaseDate(newFilm.getReleaseDate());
                 log.debug("Поле releaseDate фильма с id={} обновлено, новое значение releaseDate={}", oldFilm.getId(), oldFilm.getReleaseDate());
