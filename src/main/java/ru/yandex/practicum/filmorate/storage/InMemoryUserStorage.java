@@ -47,17 +47,17 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public void insertFriendship(Long sender_id, Long receiver_id) {
+    public void insertFriendship(Long senderId, Long receiverId) {
 
     }
 
     @Override
-    public void updateFriendship(Long sender_id, Long receiver_id, boolean confirmed) {
+    public void updateFriendship(Long senderId, Long receiverId, boolean confirmed) {
 
     }
 
     @Override
-    public boolean containsFriendship(Long sender_id, Long receiver_id, Boolean filterConfirmed) {
+    public boolean containsFriendship(Long senderId, Long receiverId, Boolean filterConfirmed) {
         return false;
     }
 }
