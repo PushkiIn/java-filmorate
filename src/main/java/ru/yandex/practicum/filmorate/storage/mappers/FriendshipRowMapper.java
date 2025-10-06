@@ -7,7 +7,7 @@ import ru.yandex.practicum.filmorate.model.Friendship;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-@Component("friendshipRowMapper")
+@Component("FriendshipRowMapper")
 public class FriendshipRowMapper implements RowMapper<Friendship> {
 
     @Override
