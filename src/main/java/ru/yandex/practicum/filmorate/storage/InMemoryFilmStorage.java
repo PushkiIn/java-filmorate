@@ -13,17 +13,22 @@ public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Long, Film> films = new HashMap<>();
 
     @Override
-    public void save(Film film) {
-        films.put(film.getId(), film);
+    public Film save(Film film) {
+        return films.put(film.getId(), film);
     }
 
     @Override
-    public Film findById(final long id) {
+    public Film update(Film entity) {
+        return null;
+    }
+
+    @Override
+    public Optional<Film> findById(Long id) {
         if (!films.containsKey(id)) {
             log.error("Попытка получить несуществующий фильм с id {}", id);
             throw new NotFoundException(String.format("Фильм с id %s не найден!", id));
         }
-        return films.get(id);
+        return Optional.of(films.get(id));
     }
 
     @Override
@@ -32,12 +37,27 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public void deleteById(long id) {
+    public void deleteById(Long id) {
         films.remove(id);
     }
 
     @Override
-    public Set<Long> getKeys() {
-        return films.keySet();
+    public List<Integer> findGenresByFilmId(Long filmId) {
+        return List.of();
+    }
+
+    @Override
+    public List<Film> findPopularFilm(int count) {
+        return List.of();
+    }
+
+    @Override
+    public void addLike(Long filmId, Long userId) {
+
+    }
+
+    @Override
+    public void removeLike(Long filmId, Long userId) {
+
     }
 }

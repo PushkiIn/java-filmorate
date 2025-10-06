@@ -15,7 +15,7 @@ public class FriendshipStorage extends BaseRepository<Friendship> {
     private static final String DELETE_FRIENDSHIP_QUERY = "DELETE FROM friendships WHERE sender_id = ? AND receiver_id = ?";
     private static final String GET_COMMON_FRIENDS_QUERY = "SELECT * FROM friendships WHERE sender_id";
 
-    public FriendshipStorage(JdbcTemplate jdbc, @Qualifier("friendshipRowMapper") RowMapper<Friendship> mapper) {
+    public FriendshipStorage(JdbcTemplate jdbc, @Qualifier("FriendshipRowMapper") RowMapper<Friendship> mapper) {
         super(jdbc, mapper) ;
     }
 
