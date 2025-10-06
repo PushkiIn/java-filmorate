@@ -12,7 +12,6 @@ import java.util.List;
 @Repository
 public class FriendshipStorage extends BaseRepository<Friendship> {
     private static final String DELETE_FRIENDSHIP_QUERY = "DELETE FROM friendships WHERE sender_id = ? AND receiver_id = ?";
-    private static final String GET_COMMON_FRIENDS_QUERY = "SELECT * FROM friendships WHERE sender_id";
 
     public FriendshipStorage(JdbcTemplate jdbc, @Qualifier("FriendshipRowMapper") RowMapper<Friendship> mapper) {
         super(jdbc, mapper);
@@ -30,7 +29,7 @@ public class FriendshipStorage extends BaseRepository<Friendship> {
         return jdbc.query(sql, (rs, rowNum) -> rs.getLong("friend_id"), id, id);
     }
 
-    public void removeFriendship(Long sender_id, Long receiver_id) {
-        jdbc.update(DELETE_FRIENDSHIP_QUERY, sender_id, receiver_id);
+    public void removeFriendship(Long senderId, Long receiverId) {
+        jdbc.update(DELETE_FRIENDSHIP_QUERY, senderId, receiverId);
     }
 }
