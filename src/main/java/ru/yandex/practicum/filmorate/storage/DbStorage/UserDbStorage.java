@@ -93,7 +93,7 @@ public class UserDbStorage extends BaseRepository<User> implements UserStorage {
     }
 
     @Override
-    public void insertFriendship(Long sender_id, Long receiver_id) {
-        jdbc.update(INSERT_FRIENDSHIP_QUERY, sender_id, receiver_id, false);
+    public void insertFriendship(Long senderId, Long receiverId) {
+        jdbc.update(INSERT_FRIENDSHIP_QUERY, senderId, receiverId, false);
     }
 }
