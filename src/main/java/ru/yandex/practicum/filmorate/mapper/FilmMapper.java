@@ -23,7 +23,7 @@ public class FilmMapper {
         film.setRatingMpa(RatingMpa.fromId(request.getMpa().getId()));
         log.debug("До присоединения жанров {}", request);
         log.debug("До присоединения жанров {}", film);
-        if(!(request.getGenres() == null || request.getGenres().isEmpty())) {
+        if (!(request.getGenres() == null || request.getGenres().isEmpty())) {
             film.setGenres(request.getGenres().stream()
                     .map(genreDto -> Genre.fromId(genreDto.getId()))
                     .collect(Collectors.toSet()));

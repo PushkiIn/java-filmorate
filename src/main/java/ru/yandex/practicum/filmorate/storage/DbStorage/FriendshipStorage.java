@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Friendship;
 import ru.yandex.practicum.filmorate.storage.BaseRepository;
 
-
 import java.util.List;
 
 @Repository
@@ -16,7 +15,7 @@ public class FriendshipStorage extends BaseRepository<Friendship> {
     private static final String GET_COMMON_FRIENDS_QUERY = "SELECT * FROM friendships WHERE sender_id";
 
     public FriendshipStorage(JdbcTemplate jdbc, @Qualifier("FriendshipRowMapper") RowMapper<Friendship> mapper) {
-        super(jdbc, mapper) ;
+        super(jdbc, mapper);
     }
 
     public List<Long> getFriends(long id) {
@@ -34,8 +33,4 @@ public class FriendshipStorage extends BaseRepository<Friendship> {
     public void removeFriendship(Long sender_id, Long receiver_id) {
         jdbc.update(DELETE_FRIENDSHIP_QUERY, sender_id, receiver_id);
     }
-
-//    public List<User> getCommonFriends () {
-//
-//    }
 }
