@@ -8,6 +8,8 @@ import ru.yandex.practicum.filmorate.dto.NewUserRequest;
 import ru.yandex.practicum.filmorate.dto.UpdateUserRequest;
 import ru.yandex.practicum.filmorate.dto.UserDto;
 import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.validation.groups.OnCreate;
+import ru.yandex.practicum.filmorate.validation.groups.OnUpdate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +27,7 @@ public class UserController {
     }
 
     @PostMapping
-    public UserDto create(@Validated @RequestBody NewUserRequest userRequest) {
+    public UserDto create(@Validated(OnCreate.class) @RequestBody NewUserRequest userRequest) {
         return userService.create(userRequest);
     }
 
@@ -35,7 +37,7 @@ public class UserController {
     }
 
     @PutMapping
-    public UserDto update(@Validated @RequestBody UpdateUserRequest userRequest) {
+    public UserDto update(@Validated(OnUpdate.class) @RequestBody UpdateUserRequest userRequest) {
         return userService.update(userRequest);
     }
 

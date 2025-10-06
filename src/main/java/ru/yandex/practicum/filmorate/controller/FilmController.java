@@ -8,6 +8,8 @@ import ru.yandex.practicum.filmorate.dto.FilmDto;
 import ru.yandex.practicum.filmorate.dto.NewFilmRequest;
 import ru.yandex.practicum.filmorate.dto.UpdateFilmRequest;
 import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.validation.groups.OnCreate;
+import ru.yandex.practicum.filmorate.validation.groups.OnUpdate;
 
 import java.util.List;
 
@@ -29,14 +31,14 @@ public class FilmController {
     }
 
     @PostMapping
-    public FilmDto create(@Validated @RequestBody NewFilmRequest request) {
+    public FilmDto create(@Validated(OnCreate.class) @RequestBody NewFilmRequest request) {
         log.debug("сохраняем фильм");
         return filmService.createFilm(request);
     }
 
 
     @PutMapping
-    public FilmDto update(@Validated @RequestBody UpdateFilmRequest request) {
+    public FilmDto update(@Validated(OnUpdate.class) @RequestBody UpdateFilmRequest request) {
         log.debug("обновляем фильм");
         return filmService.updateFilm(request);
     }
