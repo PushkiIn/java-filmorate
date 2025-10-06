@@ -14,7 +14,7 @@ import ru.yandex.practicum.filmorate.validation.groups.OnUpdate;
 import java.time.LocalDate;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FilmValidationTest {
 
