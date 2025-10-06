@@ -82,8 +82,8 @@ public class UserDbStorage extends BaseRepository<User> implements UserStorage {
     }
 
     @Override
-    public boolean containsFriendship(Long sender_id, Long receiver_id, Boolean filterConfirmed) {
-        SqlRowSet rows = jdbc.queryForRowSet(FIND_FRIENDSHIP_QUERY, sender_id, receiver_id, filterConfirmed);
+    public boolean containsFriendship(Long senderId, Long receiverId, Boolean filterConfirmed) {
+        SqlRowSet rows = jdbc.queryForRowSet(FIND_FRIENDSHIP_QUERY, senderId, receiverId, filterConfirmed);
         return rows.next();
     }
 
