@@ -12,6 +12,7 @@ import java.time.LocalDate;
 
 @Data
 public class NewUserRequest {
+    @NotNull(groups = OnCreate.class)
     @NotBlank(groups = OnCreate.class)
     @Email(groups = OnCreate.class)
     private String email;
