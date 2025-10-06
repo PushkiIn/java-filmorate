@@ -15,13 +15,13 @@ public class NewFilmRequest {
     @NotBlank(groups = OnCreate.class)
     private String name;
 
-    @Size(max = 200, groups = OnCreate.class)
+    @Size(groups = OnCreate.class, max = 200)
     private String description;
 
-    @NotBefore(minData = "1895-12-28", groups = OnCreate.class)
+    @NotBefore(groups = OnCreate.class, minData = "1895-12-28")
     private LocalDate releaseDate;
 
-    @Positive(groups = OnCreate.class)
+    @Positive(groups = OnCreate.class, message = "Длительность не может быть отрицательной")
     private Integer duration;
 
     private List<GenreDto> genres;

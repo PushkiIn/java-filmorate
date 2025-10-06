@@ -12,15 +12,15 @@ import java.util.List;
 
 @Data
 public class UpdateFilmRequest {
-    @NotNull(groups = OnUpdate.class)
+    @NotNull(message = "id обязательно", groups = OnUpdate.class)
     private Long id;
 
     private String name;
 
-    @Size(max = 200, groups = OnUpdate.class)
+    @Size(groups = OnUpdate.class, max = 200)
     private String description;
 
-    @NotBefore(minData = "1895-12-28", groups = OnUpdate.class)
+    @NotBefore(groups = OnUpdate.class, minData = "1895-12-28")
     private LocalDate releaseDate;
 
     @Positive(groups = OnUpdate.class)
