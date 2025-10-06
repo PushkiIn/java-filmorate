@@ -5,24 +5,25 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import ru.yandex.practicum.filmorate.validation.NotBefore;
+import ru.yandex.practicum.filmorate.validation.groups.OnUpdate;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Data
 public class UpdateFilmRequest {
-    @NotNull
+    @NotNull(groups = OnUpdate.class)
     private Long id;
 
     private String name;
 
-    @Size(max = 200)
+    @Size(max = 200, groups = OnUpdate.class)
     private String description;
 
-    @NotBefore(minData = "1895-12-28")
+    @NotBefore(minData = "1895-12-28", groups = OnUpdate.class)
     private LocalDate releaseDate;
 
-    @Positive
+    @Positive(groups = OnUpdate.class)
     private Integer duration;
 
     private List<GenreDto> genres;
