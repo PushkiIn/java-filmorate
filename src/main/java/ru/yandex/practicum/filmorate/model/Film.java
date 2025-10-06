@@ -1,38 +1,27 @@
 package ru.yandex.practicum.filmorate.model;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
-import ru.yandex.practicum.filmorate.validation.NotBefore;
-import ru.yandex.practicum.filmorate.validation.groups.OnCreate;
-import ru.yandex.practicum.filmorate.validation.groups.OnUpdate;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
 public class Film {
-    @NotNull(message = "id обязательно", groups = OnUpdate.class)
     private Long id;
-
-    @NotBlank(message = "Название обязательно", groups = OnCreate.class)
     private String name;
-
-    @Size(message = "Описание должно быть не длиннее {max} символов", groups = {OnCreate.class, OnUpdate.class}, max = 200)
     private String description;
-
-    @NotBefore(minData = "1895-12-28", groups = {OnCreate.class, OnCreate.class})
     private LocalDate releaseDate;
-
-    @Positive(message = "Длительность не может быть отрицательной", groups = {OnCreate.class, OnUpdate.class})
-    private int duration;
-
-    private final Set<Long> likes = new HashSet<>();
-
-    private Genre genre;
-
+    private Integer duration;
+    private Long likesCount;
+    private Set<Genre> genres = new HashSet<>();
     private RatingMpa ratingMpa;
+
+    public void setGenresFromListIds(List<Integer> genresIds) {
+        for (Integer id : genresIds) {
+            genres.add(Genre.fromId(id));
+        }
+    }
 }
