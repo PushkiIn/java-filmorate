@@ -3,16 +3,13 @@ package ru.yandex.practicum.filmorate.storage;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.List;
-import java.util.Set;
 
-public interface FilmStorage {
-    public void save(Film film);
+public interface FilmStorage extends BaseStorage<Film> {
+    List<Integer> findGenresByFilmId(Long filmId);
 
-    public Film findById(long id);
+    List<Film> findPopularFilm(int count);
 
-    public List<Film> findAll();
+    void addLike(Long filmId, Long userId);
 
-    public void deleteById(long id);
-
-    public Set<Long> getKeys();
+    void removeLike(Long filmId, Long userId);
 }

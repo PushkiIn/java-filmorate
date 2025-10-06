@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.DbStorage;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -30,7 +31,7 @@ public class UserDbStorage extends BaseRepository<User> implements UserStorage {
             "WHERE USER_ID1 = ? AND USER_ID2 = ?";
     private static final String INSERT_FRIENDSHIP_QUERY = "INSERT INTO friendships (sender_id, receiver_id, confirmed) VALUES(?, ?, ?)";
 
-
+    @Autowired
     public UserDbStorage(JdbcTemplate jdbc, @Qualifier("userRowMapper") RowMapper<User> mapper) {
         super(jdbc, mapper);
     }
@@ -60,7 +61,13 @@ public class UserDbStorage extends BaseRepository<User> implements UserStorage {
 
     @Override
     public User update(User user) {
-        update(UPDATE_QUERY, user.getLogin(), user.getEmail(), user.getName(), user.getBirthday(), user.getId());
+        update(
+                UPDATE_QUERY,
+                user.getLogin(),
+                user.getEmail(),
+                user.getName(),
+                user.getBirthday(),
+                user.getId());
         return user;
     }
 
