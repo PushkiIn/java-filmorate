@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import ru.yandex.practicum.filmorate.validation.NotAfterToday;
 import ru.yandex.practicum.filmorate.validation.groups.OnCreate;
+import ru.yandex.practicum.filmorate.validation.groups.OnUpdate;
 
 import java.time.LocalDate;
 
@@ -18,7 +19,7 @@ public class NewUserRequest {
     private String email;
 
     @NotNull(groups = OnCreate.class)
-    @Pattern(regexp = "\\S+", groups = OnCreate.class)
+    @Pattern(regexp = "\\S+", groups = {OnCreate.class, OnUpdate.class})
     private String login;
 
     private String name;
