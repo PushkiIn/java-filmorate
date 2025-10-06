@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.mappers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
@@ -9,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
+@Slf4j
 @Component
 @Qualifier("userRowMapper")
 public class UserRowMapper implements RowMapper<User> {
@@ -25,6 +27,7 @@ public class UserRowMapper implements RowMapper<User> {
                 user.setBirthday(birthday);
             }
         } catch (SQLException e) {
+            log.debug(e.getMessage());
         }
         return user;
     }

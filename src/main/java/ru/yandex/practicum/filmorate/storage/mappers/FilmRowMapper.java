@@ -21,13 +21,13 @@ public class FilmRowMapper implements RowMapper<Film> {
         film.setDuration(resultSet.getInt("duration"));
         film.setReleaseDate(resultSet.getDate("release_date").toLocalDate());
         film.setRatingMpa(RatingMpa.fromId(resultSet.getInt("rating_id")));
-
         try {
             long likes = resultSet.getLong("likes_count");
             if (!resultSet.wasNull()) {
                 film.setLikesCount(likes);
             }
         } catch (SQLException e) {
+            log.debug(e.getMessage());
         }
         log.debug("{}", film);
         return film;
