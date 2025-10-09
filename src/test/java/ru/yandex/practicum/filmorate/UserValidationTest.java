@@ -6,14 +6,16 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.dto.NewUserRequest;
+import ru.yandex.practicum.filmorate.dto.UpdateUserRequest;
 import ru.yandex.practicum.filmorate.validation.groups.OnCreate;
 import ru.yandex.practicum.filmorate.validation.groups.OnUpdate;
 
 import java.time.LocalDate;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UserValidationTest {
 
@@ -27,21 +29,21 @@ public class UserValidationTest {
 
     @Test
     void shouldValidateValidUserOnCreate() {
-        User user = new User();
+        NewUserRequest user = new NewUserRequest();
         user.setEmail("test@example.com");
         user.setLogin("Логин");
         user.setBirthday(LocalDate.of(2000, 1, 1));
 
-        Set<ConstraintViolation<User>> violations = validator.validate(user, OnCreate.class);
+        Set<ConstraintViolation<NewUserRequest>> violations = validator.validate(user, OnCreate.class);
         assertTrue(violations.isEmpty());
     }
 
     @Test
     void shouldFailIfEmailBlankOnCreate() {
-        User user = new User();
+        NewUserRequest user = new NewUserRequest();
         user.setEmail(" ");
         user.setLogin("Логин");
-        Set<ConstraintViolation<User>> violations = validator.validate(user, OnCreate.class);
+        Set<ConstraintViolation<NewUserRequest>> violations = validator.validate(user, OnCreate.class);
 
         assertFalse(violations.isEmpty());
         assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("email")));
@@ -49,10 +51,10 @@ public class UserValidationTest {
 
     @Test
     void shouldFailIfEmailInvalid() {
-        User user = new User();
+        NewUserRequest user = new NewUserRequest();
         user.setEmail("Неправильный емейл");
         user.setLogin("Логин");
-        Set<ConstraintViolation<User>> violations = validator.validate(user, OnCreate.class);
+        Set<ConstraintViolation<NewUserRequest>> violations = validator.validate(user, OnCreate.class);
 
         assertFalse(violations.isEmpty());
         assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("email")));
@@ -60,10 +62,10 @@ public class UserValidationTest {
 
     @Test
     void shouldFailIfLoginHasSpaces() {
-        User user = new User();
+        NewUserRequest user = new NewUserRequest();
         user.setEmail("test@example.com");
         user.setLogin("Логин с пробелами");
-        Set<ConstraintViolation<User>> violations = validator.validate(user, OnCreate.class);
+        Set<ConstraintViolation<NewUserRequest>> violations = validator.validate(user, OnCreate.class);
 
         assertFalse(violations.isEmpty());
         assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("login")));
@@ -71,10 +73,10 @@ public class UserValidationTest {
 
     @Test
     void shouldFailIfLoginIsNullOnCreate() {
-        User user = new User();
+        NewUserRequest user = new NewUserRequest();
         user.setEmail("test@example.com");
         user.setLogin(null);
-        Set<ConstraintViolation<User>> violations = validator.validate(user, OnCreate.class);
+        Set<ConstraintViolation<NewUserRequest>> violations = validator.validate(user, OnCreate.class);
 
         assertFalse(violations.isEmpty());
         assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("login")));
@@ -82,44 +84,44 @@ public class UserValidationTest {
 
     @Test
     void shouldPassIfLoginHasNoSpaces() {
-        User user = new User();
+        NewUserRequest user = new NewUserRequest();
         user.setEmail("test@example.com");
         user.setLogin("Логин");
-        Set<ConstraintViolation<User>> violations = validator.validate(user, OnCreate.class);
+        Set<ConstraintViolation<NewUserRequest>> violations = validator.validate(user, OnCreate.class);
 
         assertTrue(violations.isEmpty());
     }
 
     @Test
     void shouldPassIfBirthdayIsNull() {
-        User user = new User();
+        NewUserRequest user = new NewUserRequest();
         user.setEmail("test@example.com");
         user.setLogin("Логин");
         user.setBirthday(null);
 
-        Set<ConstraintViolation<User>> violations = validator.validate(user, OnCreate.class);
+        Set<ConstraintViolation<NewUserRequest>> violations = validator.validate(user, OnCreate.class);
         assertTrue(violations.isEmpty());
     }
 
     @Test
     void shouldFailIfBirthdayInFuture() {
-        User user = new User();
+        NewUserRequest user = new NewUserRequest();
         user.setEmail("test@example.com");
         user.setLogin("Логин");
         user.setBirthday(LocalDate.now().plusDays(1)); // будущее
 
-        Set<ConstraintViolation<User>> violations = validator.validate(user, OnCreate.class);
+        Set<ConstraintViolation<NewUserRequest>> violations = validator.validate(user, OnCreate.class);
         assertFalse(violations.isEmpty());
         assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("birthday")));
     }
 
     @Test
     void shouldFailIfIdIsNullOnUpdate() {
-        User user = new User();
+        UpdateUserRequest user = new UpdateUserRequest();
         user.setId(null);
         user.setEmail("test@example.com");
         user.setLogin("Логин");
-        Set<ConstraintViolation<User>> violations = validator.validate(user, OnUpdate.class);
+        Set<ConstraintViolation<UpdateUserRequest>> violations = validator.validate(user, OnUpdate.class);
 
         assertFalse(violations.isEmpty());
         assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("id")));
@@ -127,11 +129,11 @@ public class UserValidationTest {
 
     @Test
     void shouldPassIfIdIsPresentOnUpdate() {
-        User user = new User();
+        UpdateUserRequest user = new UpdateUserRequest();
         user.setId(1L);
         user.setEmail("test@example.com");
         user.setLogin("Логин");
-        Set<ConstraintViolation<User>> violations = validator.validate(user, OnUpdate.class);
+        Set<ConstraintViolation<UpdateUserRequest>> violations = validator.validate(user, OnUpdate.class);
 
         assertTrue(violations.isEmpty());
     }
