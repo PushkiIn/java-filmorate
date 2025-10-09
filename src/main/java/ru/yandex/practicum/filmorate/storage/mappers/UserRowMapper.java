@@ -29,6 +29,7 @@ public class UserRowMapper implements RowMapper<User> {
         } catch (SQLException e) {
             log.debug(e.getMessage());
         }
+        log.debug("Собрали пользователя: {}", user);
         return user;
     }
 }

@@ -41,7 +41,6 @@ CREATE TABLE IF NOT EXISTS films_likes (
 CREATE TABLE IF NOT EXISTS friendships (
     sender_id  BIGINT    NOT NULL,
     receiver_id  BIGINT    NOT NULL,
-    confirmed boolean   NOT NULL,
     CONSTRAINT pk_friendship PRIMARY KEY (sender_id, receiver_id),
 	CONSTRAINT fk_friendship_sender_id FOREIGN KEY(sender_id) REFERENCES users (user_id),
 	CONSTRAINT fk_friendship_receiver_id FOREIGN KEY(receiver_id) REFERENCES users (user_id)

@@ -19,24 +19,105 @@ import java.util.Optional;
 @Primary
 @Repository
 public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
-    private static final String FIND_ALL_QUERY = "SELECT * FROM films ORDER BY film_id";
-    private static final String FIND_BY_ID_QUERY = "SELECT * FROM films WHERE film_id = ?";
-    private static final String INSERT_QUERY = "INSERT INTO films(name, description, release_date, duration, rating_id) " +
-            "VALUES (?, ?, ?, ?, ?)";
-    private static final String INSERT_GENRES_QUERY = "INSERT INTO films_genres (film_id, genre_id) VALUES (?, ?)";
-    private static final String FIND_GENRES_QUERY = "SELECT genre_id FROM films_genres WHERE film_id = ?";
-    private static final String UPDATE_FILMS_QUERY = "UPDATE films SET name = ?, description = ?," +
-            " release_date = ?, duration = ?, rating_id = ? WHERE film_id = ?";
-    private static final String INSERT_LIKE_QUERY = "INSERT INTO films_likes (film_id, user_id) VALUES (? , ?)";
-    private static final String DELETE_LIKE_QUERY = "DELETE FROM films_likes WHERE film_id = ? AND user_id = ?";
-    private static final String DELETE_GENRES_QUERY = "DELETE FROM films_genres WHERE film_id = ?";
-    private static final String FIND_POPULAR_FILMS_QUERY = "SELECT f.film_id AS film_id, f.name AS name, " +
-            "f.description AS description, f.duration AS duration, f.release_date AS release_date, f.rating_id AS rating_id, " +
-            "COUNT(fl.user_id) AS likes_count " +
-            "FROM films AS f LEFT JOIN films_likes AS fl ON f.film_id = fl.film_id " +
-            "GROUP BY f.film_id " +
-            "ORDER BY likes_count DESC " +
-            "LIMIT ?";
+    private static final String FIND_ALL_QUERY = """
+            SELECT
+                f.film_id,
+                f.name,
+                f.description,
+                f.duration,
+                f.release_date,
+                f.rating_id,
+                r.name AS rating_name,
+                STRING_AGG(g.genre_id::text, ',') AS genre_ids,
+                STRING_AGG(g.name, ',') AS genre_names
+            FROM films AS f
+            LEFT JOIN films_genres AS fg ON f.film_id = fg.film_id
+            LEFT JOIN genres AS g ON fg.genre_id = g.genre_id
+            LEFT JOIN ratings AS r ON f.rating_id = r.rating_id
+            GROUP BY f.film_id
+            ORDER BY f.film_id
+            """;
+
+    private static final String FIND_BY_ID_QUERY = """
+            SELECT 
+                f.film_id,
+                f.name,
+                f.description,
+                f.duration,
+                f.release_date,
+                f.rating_id,
+                r.name AS rating_name,
+                STRING_AGG(g.genre_id::text, ',') AS genre_ids,
+                STRING_AGG(g.name, ',') AS genre_names
+            FROM films AS f
+            LEFT JOIN films_genres AS fg ON f.film_id = fg.film_id
+            LEFT JOIN genres AS g ON fg.genre_id = g.genre_id
+            LEFT JOIN ratings AS r ON f.rating_id = r.rating_id
+            WHERE f.film_id = ?
+            GROUP BY f.film_id
+            """;
+
+    private static final String INSERT_QUERY = """
+            INSERT INTO films(name, description, release_date, duration, rating_id)
+            VALUES (?, ?, ?, ?, ?)
+            """;
+
+    private static final String INSERT_GENRES_QUERY = """
+            INSERT INTO films_genres (film_id, genre_id)
+            VALUES (?, ?)
+            """;
+
+    private static final String FIND_GENRES_QUERY = """
+            SELECT genre_id 
+            FROM films_genres WHERE film_id = ?                                             
+            """;
+
+    private static final String UPDATE_FILMS_QUERY = """
+            UPDATE films 
+            SET 
+               name = ?,
+               description = ?,
+               release_date = ?,
+               duration = ?,
+               rating_id = ?
+            WHERE film_id = ?
+            """;
+
+    private static final String INSERT_LIKE_QUERY = """
+            INSERT INTO films_likes (film_id, user_id)
+            VALUES (? , ?)
+            """;
+
+    private static final String DELETE_LIKE_QUERY = """
+            DELETE FROM films_likes
+            WHERE film_id = ? AND user_id = ?
+            """;
+
+    private static final String DELETE_GENRES_QUERY = """
+            DELETE FROM films_genres 
+            WHERE film_id = ?
+            """;
+    private static final String FIND_POPULAR_FILMS_QUERY = """
+            SELECT 
+                f.film_id,
+                f.name,
+                f.description,
+                f.duration,
+                f.release_date,
+                f.rating_id,
+                r.name AS rating_name,
+                STRING_AGG(g.genre_id::text, ',') AS genre_ids,
+                STRING_AGG(g.name, ',') AS genre_names,
+                COUNT(fl.user_id) AS likes_count
+            FROM public.films AS f
+            LEFT JOIN public.films_genres fg ON f.film_id = fg.film_id
+            LEFT JOIN public.genres g ON fg.genre_id = g.genre_id
+            JOIN public.ratings AS r ON f.rating_id = r.rating_id
+            LEFT JOIN public.films_likes AS fl ON f.film_id = fl.film_id
+            GROUP BY f.film_id, f.name, f.description, f.duration, f.release_date, f.rating_id, r.name
+            ORDER BY likes_count DESC
+            LIMIT ?
+            """;
 
     public FilmDbStorage(JdbcTemplate jdbc, @Qualifier("FilmRowMapper") RowMapper<Film> mapper) {
         super(jdbc, mapper);
@@ -85,25 +166,12 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
     @Override
     public Optional<Film> findById(Long id) {
         Optional<Film> filmOp = findOne(FIND_BY_ID_QUERY, id);
-        filmOp.ifPresent(film -> film.setGenresFromListIds(findGenresByFilmId(id)));
         return filmOp;
     }
 
     @Override
     public List<Film> findAll() {
-        List<Film> films = findMany(FIND_ALL_QUERY);
-        films.forEach(film -> film.setGenresFromListIds(findGenresByFilmId(film.getId())));
-        return films;
-    }
-
-    @Override
-    public void deleteById(Long id) {
-
-    }
-
-    @Override
-    public List<Integer> findGenresByFilmId(Long filmId) {
-        return jdbc.query(FIND_GENRES_QUERY, (rs, rowNum) -> rs.getInt("genre_id"), filmId);
+        return findMany(FIND_ALL_QUERY);
     }
 
     @Override

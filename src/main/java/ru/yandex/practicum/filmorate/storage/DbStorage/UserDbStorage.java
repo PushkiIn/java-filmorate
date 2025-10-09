@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.BaseRepository;
@@ -21,15 +20,26 @@ import java.util.Optional;
 public class UserDbStorage extends BaseRepository<User> implements UserStorage {
     private static final String FIND_ALL_QUERY = "SELECT * FROM users ORDER BY user_id";
     private static final String FIND_BY_ID_QUERY = "SELECT * FROM users WHERE user_id = ?";
-    private static final String FIND_BY_EMAIL_QUERY = "SELECT * FROM users WHERE email = ?";
     private static final String INSERT_QUERY = "INSERT INTO users (email, login, name, birthday) VALUES (?, ?, ?, ?)";
-    private static final String UPDATE_QUERY = "UPDATE users SET login = ?, email = ?, name = ?, birthday = ?" +
-            "WHERE user_id = ?";
-    private static final String DELETE_BY_ID_QUERY = "DELETE FROM users WHERE user_id = ?";
-    private static final String FIND_FRIENDSHIP_QUERY = "SELECT * FROM friendships WHERE sender_id = ? AND receiver_id = ? AND  CONFIRMED = ?";
-    private static final String UPDATE_FRIENDSHIP_QUERY = "UPDATE friendships SET sender_id = ?, receiver_id = ?, confirmed = ? " +
-            "WHERE USER_ID1 = ? AND USER_ID2 = ?";
-    private static final String INSERT_FRIENDSHIP_QUERY = "INSERT INTO friendships (sender_id, receiver_id, confirmed) VALUES(?, ?, ?)";
+    private static final String UPDATE_QUERY = """
+            UPDATE users
+            SET email = ?, login = ?, name = ?, birthday = ?
+            WHERE user_id = ?
+            """;
+    private static final String GET_COMMON_FRIENDS_QUERY = """
+            SELECT *
+            FROM users
+            WHERE user_id IN (
+                SELECT receiver_id
+                FROM friendships
+                WHERE sender_id = ? AND receiver_id IN (
+                    SELECT receiver_id
+                    FROM friendships
+                    WHERE sender_id = ?
+                )
+            )
+            ORDER BY user_id
+            """;
 
     @Autowired
     public UserDbStorage(JdbcTemplate jdbc, @Qualifier("userRowMapper") RowMapper<User> mapper) {
@@ -63,8 +73,8 @@ public class UserDbStorage extends BaseRepository<User> implements UserStorage {
     public User update(User user) {
         update(
                 UPDATE_QUERY,
-                user.getLogin(),
                 user.getEmail(),
+                user.getLogin(),
                 user.getName(),
                 user.getBirthday(),
                 user.getId());
@@ -72,28 +82,7 @@ public class UserDbStorage extends BaseRepository<User> implements UserStorage {
     }
 
     @Override
-    public Optional<User> findByEmail(String email) {
-        return findOne(FIND_BY_EMAIL_QUERY, email);
-    }
-
-    @Override
-    public void deleteById(Long id) {
-        update(DELETE_BY_ID_QUERY, id);
-    }
-
-    @Override
-    public boolean containsFriendship(Long senderId, Long receiverId, Boolean filterConfirmed) {
-        SqlRowSet rows = jdbc.queryForRowSet(FIND_FRIENDSHIP_QUERY, senderId, receiverId, filterConfirmed);
-        return rows.next();
-    }
-
-    @Override
-    public void updateFriendship(Long senderId, Long receiverId, boolean confirmed) {
-        jdbc.update(UPDATE_FRIENDSHIP_QUERY, senderId, receiverId, confirmed, receiverId, senderId);
-    }
-
-    @Override
-    public void insertFriendship(Long senderId, Long receiverId) {
-        jdbc.update(INSERT_FRIENDSHIP_QUERY, senderId, receiverId, false);
+    public List<User> getCommonFriends(Long firstUserId, Long secondUserId) {
+        return findMany(GET_COMMON_FRIENDS_QUERY, firstUserId, secondUserId);
     }
 }
