@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.dto.UpdateFilmRequest;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.util.List;
@@ -20,6 +21,8 @@ import java.util.stream.Collectors;
 public class FilmService {
     FilmStorage filmStorage;
     UserService userService;
+    GenreService genreService;
+    MpaService mpaService;
 
     public List<FilmDto> getFilms() {
         return filmStorage.findAll()
@@ -37,12 +40,14 @@ public class FilmService {
 
     public FilmDto createFilm(NewFilmRequest filmRequest) {
         Film film = FilmMapper.mapToFilm(filmRequest);
+        validate(film);
         return FilmMapper.mapToFilmDto(filmStorage.save(film));
     }
 
     public FilmDto updateFilm(UpdateFilmRequest filmRequest) {
         Film film = filmStorage.findById(filmRequest.getId()).orElseThrow(() -> new NotFoundException(String.format("Фильм с id = %d, не найден", filmRequest.getId())));
-        film = FilmMapper.updateFilmFields(film, filmRequest);
+        FilmMapper.updateFilmFields(film, filmRequest);
+        validate(film);
         return FilmMapper.mapToFilmDto(filmStorage.update(film));
     }
 
@@ -62,5 +67,12 @@ public class FilmService {
 
     public List<FilmDto> findPopularFilm(int count) {
         return filmStorage.findPopularFilm(count).stream().map(FilmMapper::mapToFilmDto).toList();
+    }
+
+    public void validate(Film film) {
+        for (Genre genre : film.getGenres()) {
+            genreService.findById((long) genre.getId());
+        }
+        mpaService.findById((long) film.getRatingMpa().getId());
     }
 }

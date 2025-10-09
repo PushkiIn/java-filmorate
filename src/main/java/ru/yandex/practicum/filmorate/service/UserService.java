@@ -13,9 +13,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.DbStorage.FriendshipStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Slf4j
 @Service
@@ -25,12 +23,10 @@ public class UserService {
     private final FriendshipStorage friendshipStorage;
 
     public List<UserDto> findAll() {
-        List<UserDto> response = userStorage.findAll()
+        return userStorage.findAll()
                 .stream()
                 .map(UserMapper::mapToUserDto)
                 .toList();
-        response.stream().forEach(ur -> ur.setFriends(Set.copyOf(friendshipStorage.getFriends(ur.getId()))));
-        return response;
     }
 
     public UserDto findUser(Long id) {
@@ -54,36 +50,28 @@ public class UserService {
 
     public void addFriend(Long senderId, Long receiverId) {
         if (friendshipCreateValidation(senderId, receiverId)) {
-            userStorage.insertFriendship(senderId, receiverId);
+            friendshipStorage.insertFriendship(senderId, receiverId);
         }
     }
 
     public List<UserDto> getFriends(Long userId) {
-        User user = userStorage.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь id = " + userId + ", не найден."));
+        userStorage.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь id = " + userId + ", не найден."));
         return friendshipStorage.getFriends(userId).stream().map(id -> new UserDto(id)).toList();
     }
 
-    public List<UserDto> getCommonFriends(Long userId, Long otherId) {
-        User user = userStorage.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь id = " + userId + ", не найден."));
-        ;
-        User other = userStorage.findById(otherId).orElseThrow(() -> new NotFoundException("Пользователь id = " + userId + ", не найден."));
-        ;
+    public List<UserDto> getCommonFriends(Long firestUserId, Long secondUserId) {
+        User user = userStorage.findById(firestUserId).orElseThrow(() -> new NotFoundException("Пользователь id = " + firestUserId + ", не найден."));
+        User other = userStorage.findById(secondUserId).orElseThrow(() -> new NotFoundException("Пользователь id = " + secondUserId + ", не найден."));
 
-        List<Long> friends = friendshipStorage.getFriends(userId);
-        List<Long> friendsOther = friendshipStorage.getFriends(otherId);
-
-        Set<Long> commonFriends = new HashSet<>();
-        commonFriends.addAll(friends);
-        commonFriends.addAll(friendsOther);
-
-        return commonFriends.stream().filter(id -> friends.contains(id)).filter(id -> friendsOther.contains(id)).map(id -> UserMapper.mapToUserDto(userStorage.findById(id).get())).toList();
+        return userStorage.getCommonFriends(firestUserId, secondUserId)
+                .stream()
+                .map(UserMapper::mapToUserDto)
+                .toList();
     }
 
     public void deleteFriend(Long senderId, Long receiverId) {
         userStorage.findById(senderId).orElseThrow(() -> new NotFoundException("Пользователь id = " + senderId + ", не найден."));
-        ;
         userStorage.findById(receiverId).orElseThrow(() -> new NotFoundException("Пользователь id = " + receiverId + ", не найден."));
-        ;
 
         friendshipStorage.removeFriendship(senderId, receiverId);
     }
@@ -103,7 +91,7 @@ public class UserService {
         User user = userStorage.findById(senderId).orElseThrow(() -> new NotFoundException("Пользователь не id = " + senderId + " найден"));
         User friend = userStorage.findById(receiverId).orElseThrow(() -> new NotFoundException("Пользователь не id = " + receiverId + " найден"));
 
-        if (user.getFriends().containsKey(receiverId)) {
+        if (user.getFriends().contains(receiverId)) {
             throw new CreateFriendsException("Дружба уже существует");
         }
 

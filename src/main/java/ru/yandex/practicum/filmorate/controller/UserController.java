@@ -11,7 +11,6 @@ import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.validation.groups.OnCreate;
 import ru.yandex.practicum.filmorate.validation.groups.OnUpdate;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -42,11 +41,8 @@ public class UserController {
     }
 
     @PutMapping("/{senderId}/friends/{receiverId}")
-    public List<Long> addFriend(@PathVariable Long senderId, @PathVariable Long receiverId) {
+    public void addFriend(@PathVariable Long senderId, @PathVariable Long receiverId) {
         userService.addFriend(senderId, receiverId);
-        List<Long> response = new ArrayList<>();
-        response.add(receiverId);
-        return response;
     }
 
     @GetMapping("/{userId}/friends")

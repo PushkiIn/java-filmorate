@@ -1,10 +1,12 @@
 package ru.yandex.practicum.filmorate.mapper;
 
+import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.dto.NewUserRequest;
 import ru.yandex.practicum.filmorate.dto.UpdateUserRequest;
 import ru.yandex.practicum.filmorate.dto.UserDto;
 import ru.yandex.practicum.filmorate.model.User;
 
+@Slf4j
 public class UserMapper {
     public static User mapToUser(NewUserRequest request) {
         User user = new User();
@@ -23,7 +25,7 @@ public class UserMapper {
         userDto.setLogin(user.getLogin());
         userDto.setName(user.getName());
         userDto.setBirthday(user.getBirthday());
-        userDto.setFriends(user.getFriends().keySet());
+        userDto.setFriends(user.getFriends());
         return userDto;
     }
 
@@ -42,7 +44,7 @@ public class UserMapper {
         } else {
             setDefaultNameIfBlank(user);
         }
-
+        log.debug("Пользователь для обновления: {}", user);
         return user;
     }
 
