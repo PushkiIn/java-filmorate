@@ -17,10 +17,4 @@ public class Film {
     private Long likesCount;
     private Set<Genre> genres = new HashSet<>();
     private RatingMpa ratingMpa;
-
-    public void setGenresFromListIds(List<Integer> genresIds) {
-        for (Integer id : genresIds) {
-            genres.add(Genre.fromId(id));
-        }
-    }
 }

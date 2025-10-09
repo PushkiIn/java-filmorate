@@ -20,15 +20,12 @@ public class FilmMapper {
         film.setDescription(request.getDescription());
         film.setDuration(request.getDuration());
         film.setReleaseDate(request.getReleaseDate());
-        film.setRatingMpa(RatingMpa.fromId(request.getMpa().getId()));
-        log.debug("До присоединения жанров {}", request);
-        log.debug("До присоединения жанров {}", film);
+        film.setRatingMpa(new RatingMpa(request.getMpa().getId(), request.getMpa().getName()));
         if (!(request.getGenres() == null || request.getGenres().isEmpty())) {
             film.setGenres(request.getGenres().stream()
-                    .map(genreDto -> Genre.fromId(genreDto.getId()))
+                    .map(genreDto -> new Genre(genreDto.getId(), genreDto.getName()))
                     .collect(Collectors.toSet()));
         }
-        log.debug("После присоединения жанров {}", film);
         return film;
     }
 
@@ -39,9 +36,9 @@ public class FilmMapper {
         dto.setDescription(film.getDescription());
         dto.setDuration(film.getDuration());
         dto.setReleaseDate(film.getReleaseDate());
-        dto.setMpa(new MpaDto(film.getRatingMpa().getId(), film.getRatingMpa().getDisplayName()));
+        dto.setMpa(new MpaDto(film.getRatingMpa().getId(), film.getRatingMpa().getName()));
         dto.setGenres(film.getGenres().stream()
-                .map(genre -> new GenreDto(genre.getId(), genre.getDisplayName()))
+                .map(genre -> new GenreDto(genre.getId(), genre.getName()))
                 .sorted(Comparator.comparing(GenreDto::getId))
                 .toList());
         dto.setLikesCount(film.getLikesCount());
@@ -62,11 +59,11 @@ public class FilmMapper {
             film.setReleaseDate(request.getReleaseDate());
         }
         if (request.hasMpa()) {
-            film.setRatingMpa(RatingMpa.fromId(request.getMpa().getId()));
+            film.setRatingMpa(new RatingMpa(request.getMpa().getId(), request.getName()));
         }
         if (request.hasGenres()) {
             film.setGenres(request.getGenres().stream()
-                    .map(genreDto -> Genre.fromId(genreDto.getId()))
+                    .map(genreDto -> new Genre(genreDto.getId(), genreDto.getName()))
                     .collect(Collectors.toSet()));
         }
         log.debug("После обновления полей {}", film);

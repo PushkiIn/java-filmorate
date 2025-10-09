@@ -8,10 +8,10 @@ import ru.yandex.practicum.filmorate.model.RatingMpa;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MpaMapper {
     public static MpaDto mapToDto(RatingMpa ratingMpa) {
-        return new MpaDto(ratingMpa.getId(), ratingMpa.getDisplayName());
+        return new MpaDto(ratingMpa.getId(), ratingMpa.getName());
     }
 
     public static RatingMpa mapToMpa(MpaDto mpaDto) {
-        return RatingMpa.fromId(mpaDto.getId());
+        return new RatingMpa(mpaDto.getId(), mpaDto.getName());
     }
 }
