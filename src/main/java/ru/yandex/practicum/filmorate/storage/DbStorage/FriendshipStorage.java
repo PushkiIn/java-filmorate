@@ -18,10 +18,7 @@ public class FriendshipStorage {
 
 
     public List<Long> getFriends(long id) {
-        log.debug("Получение друзей:");
-        List<Long> friends = jdbc.query(GET_FRIENDSHIP_QUERY, (rs, rowNum) -> rs.getLong("receiver_id"), id);
-        log.debug("Список друзей:", friends);
-        return friends;
+        return jdbc.query(GET_FRIENDSHIP_QUERY, (rs, rowNum) -> rs.getLong("receiver_id"), id);
     }
 
     public void removeFriendship(Long senderId, Long receiverId) {
