@@ -39,7 +39,7 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
             """;
 
     private static final String FIND_BY_ID_QUERY = """
-            SELECT 
+            SELECT
                 f.film_id,
                 f.name,
                 f.description,
@@ -68,13 +68,13 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
             """;
 
     private static final String FIND_GENRES_QUERY = """
-            SELECT genre_id 
-            FROM films_genres WHERE film_id = ?                                             
+            SELECT genre_id
+            FROM films_genres WHERE film_id = ?
             """;
 
     private static final String UPDATE_FILMS_QUERY = """
-            UPDATE films 
-            SET 
+            UPDATE films
+            SET
                name = ?,
                description = ?,
                release_date = ?,
@@ -94,11 +94,11 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
             """;
 
     private static final String DELETE_GENRES_QUERY = """
-            DELETE FROM films_genres 
+            DELETE FROM films_genres
             WHERE film_id = ?
             """;
     private static final String FIND_POPULAR_FILMS_QUERY = """
-            SELECT 
+            SELECT
                 f.film_id,
                 f.name,
                 f.description,
